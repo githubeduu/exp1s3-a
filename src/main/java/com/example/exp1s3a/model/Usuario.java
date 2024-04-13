@@ -7,6 +7,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity 
 @Table(name = "usuario")
@@ -33,8 +35,15 @@ public class Usuario{
     private String direccion;
 
     @Nonnull
-    @Column(name = "rol")
-    private Roles rol;
+    @Column(name = "comuna")
+    private String comuna;
+
+    @Column(name = "rol_id", insertable = false, updatable = false)
+    private Long rolId;
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id", referencedColumnName = "id")
+    private Roles roles;
 
     //getters
     public Long getId(){
@@ -57,8 +66,16 @@ public class Usuario{
         return direccion;
     }
 
+    public String getComuna(){
+        return comuna;
+    }
+
     public Roles getRoles(){
-        return rol;
+        return roles;
+    }
+    
+    public Long getRolId(){
+        return rolId;
     }
 
 
@@ -83,8 +100,16 @@ public class Usuario{
         this.direccion = direccion;
     }
 
-    public void setRol(Roles rol){
-        this.rol = rol;
+    public void setComuna(String comuna){
+        this.comuna = comuna;
+    }
+
+    public void setRol(Roles roles){
+        this.roles = roles;
+    }
+
+    public void setRolId(Long rolId){
+        this.rolId = rolId;
     }
 }
 

@@ -16,15 +16,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.exp1s3a.model.Roles;
 import com.example.exp1s3a.model.Usuario;
+import com.example.exp1s3a.service.RolesService;
 import com.example.exp1s3a.service.UsuarioService;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @RestController
 @RequestMapping("/usuario")
+@Slf4j
 public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private RolesService rolesService;
 
     @GetMapping
     public List<Usuario> getUsuarios() {       
@@ -43,23 +50,65 @@ public class UsuarioController {
   
     @PostMapping
     public ResponseEntity<?> createUsuario(@Validated @RequestBody Usuario usuario) {
-        try {
-            Usuario nuevoUsuario = usuarioService.createUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+      try {      
+              Roles rol = rolesService.getRolesById(usuario.getRolId()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+
+              usuario.setRol(rol);   
+              Usuario nuevoUsuario = usuarioService.createUsuario(usuario);
+
+               return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario");
-        }
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario:          " + e);
+             }
     }
 
     @PutMapping("/{id}")
-    public Usuario updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
-        return usuarioService.updateUsuario(id, usuario);
+    public ResponseEntity<?> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuario) {
+    try{        
+        Optional<Usuario> usuarioExistente = usuarioService.getUsuarioById(id);
+        if(usuarioExistente.isPresent())
+        {
+            Usuario usuarioActual = usuarioExistente.get();
+
+            if(usuario.getContrasena() != null){
+                usuarioActual.setContrasena(usuario.getContrasena());
+            }
+
+            if(usuario.getRolId() != null){           
+                Roles rol = rolesService.getRolesById(usuario.getRolId())
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+                usuarioActual.setRol(rol);
+            }    
+  
+
+            if(usuario.getDireccion() != null){               
+                usuarioActual.setDireccion((usuario.getDireccion()));            
+            }
+
+            if(usuario.getComuna() != null){
+                usuarioActual.setComuna(usuario.getComuna());            
+            }           
+         
+            Usuario usuarioActualizado = usuarioService.updateUsuario(id, usuarioActual);
+            return ResponseEntity.ok(usuarioActualizado);
+        }else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        } 
+        } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el usuario:          " + e);
+     }      
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUsuario(@PathVariable Long id)
-    {
-        usuarioService.deleteUsuario(id);
-    }
+    public ResponseEntity<?> deleteUsuario(@PathVariable Long id) {
+    Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
+        if (usuario.isPresent()) {
+            usuarioService.deleteUsuario(id);
+            return ResponseEntity.ok("Usuario eliminado correctamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
+        }
+}
+
 
 }
