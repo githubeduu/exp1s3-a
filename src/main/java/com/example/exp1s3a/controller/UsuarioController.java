@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.exp1s3a.DTO.CreacionUsuarioDTO;
+import com.example.exp1s3a.model.Auth;
 import com.example.exp1s3a.model.Roles;
 import com.example.exp1s3a.model.Usuario;
+import com.example.exp1s3a.service.AuthService;
 import com.example.exp1s3a.service.RolesService;
 import com.example.exp1s3a.service.UsuarioService;
 
@@ -33,6 +36,18 @@ public class UsuarioController {
     @Autowired
     private RolesService rolesService;
 
+    @Autowired
+    private AuthService authService;
+
+    @PostMapping("/signin")
+    public ResponseEntity<String> login(@RequestBody  String username, @RequestBody  String password) {
+        if (authService.validatePassword(username, password)) {
+            return ResponseEntity.ok("Contraseña válida");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Contraseña incorrecta");
+        }
+    }
+    
     @GetMapping
     public List<Usuario> getUsuarios() {       
        return usuarioService.getAllUsuario();       
@@ -56,6 +71,11 @@ public class UsuarioController {
               usuario.setRol(rol);   
               Usuario nuevoUsuario = usuarioService.createUsuario(usuario);
 
+            //   Auth auth = new Auth();
+            //   auth.setUsername(usuario.getUsername());
+            //   auth.setPassword(usuario.getPassword());
+            //   auth = authService.createAuth(auth);
+
                return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
         } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el usuario:          " + e);
@@ -69,10 +89,6 @@ public class UsuarioController {
         if(usuarioExistente.isPresent())
         {
             Usuario usuarioActual = usuarioExistente.get();
-
-            if(usuario.getContrasena() != null){
-                usuarioActual.setContrasena(usuario.getContrasena());
-            }
 
             if(usuario.getRolId() != null){           
                 Roles rol = rolesService.getRolesById(usuario.getRolId())

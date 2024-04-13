@@ -23,10 +23,6 @@ public class Usuario{
     private String nombre;
 
     @Nonnull
-    @Column(name = "contrasena")
-    private String contrasena;
-
-    @Nonnull
     @Column(name = "rut")
     private String rut;
 
@@ -45,6 +41,14 @@ public class Usuario{
     @JoinColumn(name = "rol_id", referencedColumnName = "id")
     private Roles roles;
 
+    // @Nonnull
+    // @Column(name = "username")
+    // private String username;
+
+    // @Nonnull
+    // @Column(name = "password")
+    // private String password;
+
     //getters
     public Long getId(){
         return id;
@@ -53,11 +57,7 @@ public class Usuario{
     public String getNombre(){
         return nombre;
     }
-
-    public String getContrasena(){
-        return contrasena;
-    }
-
+  
     public String getRut(){
         return rut;
     }
@@ -73,10 +73,18 @@ public class Usuario{
     public Roles getRoles(){
         return roles;
     }
-    
+
     public Long getRolId(){
         return rolId;
     }
+
+    // public String getUsername(){
+    //     return username;
+    // }
+
+    // public String getPassword(){
+    //     return password;
+    // }
 
 
     //setters
@@ -87,11 +95,7 @@ public class Usuario{
     public void setNombre(String nombre){
         this.nombre = nombre;
     }
-
-    public void setContrasena(String contrasena){
-        this.contrasena = contrasena;
-    }
-
+    
     public void setRut(String rut){
         this.rut = rut;
     }
@@ -107,9 +111,18 @@ public class Usuario{
     public void setRol(Roles roles){
         this.roles = roles;
     }
-
+    
     public void setRolId(Long rolId){
         this.rolId = rolId;
     }
+
+    // public void setUsername(String username){
+    //     this.username = username;
+    // }
+
+    // public void setPassword(String password){
+    //     this.password = password;
+    // }
+ 
 }
 
