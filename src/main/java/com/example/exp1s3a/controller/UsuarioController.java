@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.exp1s3a.DTO.CreacionUsuarioDTO;
+import com.example.exp1s3a.DTO.LoginDTO;
 import com.example.exp1s3a.model.Auth;
 import com.example.exp1s3a.model.Roles;
 import com.example.exp1s3a.model.Usuario;
@@ -35,12 +36,14 @@ public class UsuarioController {
     private UsuarioService usuarioService;
     @Autowired
     private RolesService rolesService;
-
     @Autowired
     private AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<String> login(@RequestBody  String username, @RequestBody  String password) {
+    public ResponseEntity<String> login(@RequestBody LoginDTO loginDto) {
+        String username = loginDto.getUsername();
+        String password = loginDto.getPassword();
+       
         if (authService.validatePassword(username, password)) {
             return ResponseEntity.ok("Contraseña válida");
         } else {
@@ -64,17 +67,25 @@ public class UsuarioController {
     }   
   
     @PostMapping
-    public ResponseEntity<?> createUsuario(@Validated @RequestBody Usuario usuario) {
-      try {      
-              Roles rol = rolesService.getRolesById(usuario.getRolId()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
+    public ResponseEntity<?> createUsuario(@Validated @RequestBody CreacionUsuarioDTO usuarioDto) {
+      try {    
+             Usuario usuario = new Usuario();
+             usuario.setId(usuarioDto.getId());
+             usuario.setNombre(usuarioDto.getNombre());
+             usuario.setRut(usuarioDto.getRut());
+             usuario.setDireccion(usuarioDto.getDireccion());
+             usuario.setComuna(usuarioDto.getComuna());
+             usuario.setRolId(usuarioDto.getRolId());        
+
+              Roles rol = rolesService.getRolesById(usuarioDto.getRolId()).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
               usuario.setRol(rol);   
               Usuario nuevoUsuario = usuarioService.createUsuario(usuario);
 
-            //   Auth auth = new Auth();
-            //   auth.setUsername(usuario.getUsername());
-            //   auth.setPassword(usuario.getPassword());
-            //   auth = authService.createAuth(auth);
+              Auth auth = new Auth();
+              auth.setUsername(usuarioDto.getUsername());
+              auth.setPassword(usuarioDto.getPassword());
+              auth = authService.createAuth(auth);
 
                return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
         } catch (Exception e) {
@@ -125,6 +136,5 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado");
         }
 }
-
 
 }

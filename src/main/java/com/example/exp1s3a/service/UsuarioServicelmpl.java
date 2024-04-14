@@ -28,8 +28,7 @@ public class UsuarioServicelmpl implements UsuarioService{
     }
 
     @Override
-    public Usuario createUsuario(Usuario usuario){ 
-        log.info("Service usuario:   " + usuario.toString());
+    public Usuario createUsuario(Usuario usuario){         
         return usuarioRepository.save(usuario);
     }
 

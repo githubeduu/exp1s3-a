@@ -1,8 +1,11 @@
 package com.example.exp1s3a.DTO;
 
+import java.io.Serializable;
+
 import com.example.exp1s3a.model.Roles;
 
-public class CreacionUsuarioDTO {
+public class CreacionUsuarioDTO implements Serializable {
+    private Long id;
     private String nombre;
     private String rut;
     private String direccion;
@@ -12,7 +15,11 @@ public class CreacionUsuarioDTO {
     private String password;
     private Roles rol;
 
-    //getters
+    //getters    
+    public Long getId() {
+        return id;
+    }
+
     public String getNombre(){
         return nombre;
     }
@@ -44,10 +51,12 @@ public class CreacionUsuarioDTO {
     public Roles getRol(){
         return rol;
     }
-
-
-
+   
     //setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setNombre(String nombre){
         this.nombre = nombre;
     }
