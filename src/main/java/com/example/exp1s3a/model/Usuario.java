@@ -41,14 +41,6 @@ public class Usuario{
     @JoinColumn(name = "rol_id", referencedColumnName = "id")
     private Roles roles;
 
-    // @Nonnull
-    // @Column(name = "username")
-    // private String username;
-
-    // @Nonnull
-    // @Column(name = "password")
-    // private String password;
-
     //getters
     public Long getId(){
         return id;
@@ -76,15 +68,7 @@ public class Usuario{
 
     public Long getRolId(){
         return rolId;
-    }
-
-    // public String getUsername(){
-    //     return username;
-    // }
-
-    // public String getPassword(){
-    //     return password;
-    // }
+    }   
 
 
     //setters
