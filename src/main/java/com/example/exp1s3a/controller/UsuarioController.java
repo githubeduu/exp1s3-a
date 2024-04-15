@@ -56,6 +56,11 @@ public class UsuarioController {
        return usuarioService.getAllUsuario();       
     }
 
+    @GetMapping("/roles")
+    public List<Roles> getRoles() {       
+       return rolesService.getAllRoles();       
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getUsuarioById(@PathVariable Long id) {
         Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
